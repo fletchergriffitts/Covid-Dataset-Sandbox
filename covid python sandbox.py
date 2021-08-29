@@ -3,6 +3,8 @@
 Created on Thu Aug  5 16:58:00 2021
 Covid mess around
 @author: Fletcher
+
+Dataset obtained from: https://healthdata.gov/Hospital/COVID-19-Reported-Patient-Impact-and-Hospital-Capa/anag-cw7u
 """
 
 
@@ -16,7 +18,7 @@ import seaborn as sns
 
 
 #Import the datasets and clean them up
-Hospital_Capacity = pd.read_csv("COVID-19_Reported_Patient_Impact_and_Hospital_Capacity_by_Facility.csv").replace(-999999, 2)   #read the .csv dataset
+Hospital_Capacity = pd.read_csv("COVID-19_Reported_Patient_Impact_and_Hospital_Capacity_by_Facility.csv").replace(-999999, 2)   #read the .csv dataset and replace the -999999 values with 2 since all cases with <4 are recorded as -999999 to protect patient confidentiality
 
 TN_Hospitals = Hospital_Capacity.query('state == ["TN"]')               #Extract the TN data into a new TN variable
 
