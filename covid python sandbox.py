@@ -22,10 +22,10 @@ Hospital_Capacity = pd.read_csv("COVID-19_Reported_Patient_Impact_and_Hospital_C
 
 TN_Hospitals = Hospital_Capacity.query('state == ["TN"]')               #Extract the TN data into a new TN variable
 
-time_frame = TN_Hospitals["collection_week"].unique()[::-1]             #Extract the collection week data into its own "time_frame" variable for plotting
-sevdayavg_totalstaffedadulticubeds = np.array([])                       #Initialize a seven day moving average of total staffed ICU beds into a variable
-sevdayavg_totalstaffedadulticubedsoccupied = np.array([])               #Initialize a seven day moving average of total occupied and staffed ICU beds into a variable
-sevdayavg_totalstaffedadulticubedsoccupiedwithcovid = np.array([])      #Initialize a seven day moving average of total occupied and staffed ICU beds with confirmed COVID into a variable
+time_frame = TN_Hospitals["collection_week"].unique()[::-1]             #Extract the collection week data into its own "time_frame" variable for plotting; reverse the order so it proceeds from oldest to newest
+sevdayavg_totalstaffedadulticubeds = np.array([])                       #Initialize an empty array for storing the seven day moving average of total staffed ICU beds
+sevdayavg_totalstaffedadulticubedsoccupied = np.array([])               #Initialize an empty array for storing the seven day moving average of total occupied and staffed ICU beds
+sevdayavg_totalstaffedadulticubedsoccupiedwithcovid = np.array([])      #Initialize an empty array for storing the seven day moving average of total occupied and staffed ICU beds with confirmed COVID
 for each in time_frame:                                                 #For each week of reporting...
     total = TN_Hospitals.query('collection_week == ["'+ each +'"]')["total_staffed_adult_icu_beds_7_day_avg"].sum()                                     #...add up the total adult ICU beds for each hospital in Tennessee...
     total_occupied = TN_Hospitals.query('collection_week == ["'+ each +'"]')["staffed_adult_icu_bed_occupancy_7_day_avg"].sum()                         #...add up the total adult occupied ICU beds for each hospital in Tennessee...
@@ -37,12 +37,23 @@ for each in time_frame:                                                 #For eac
 
 
 #plotting
-sns.set_theme(font_scale = 2)       #set the seaborn plotting library theme and increase the font size multiplier by 2
+sns.set_theme(style = "whitegrid", font_scale = 2)       #set the seaborn plotting library theme and increase the font size multiplier by 2
+lineplot_linewidth = 5
+fig, ax = plt.subplots()
 
-g1 = sns.lineplot(x = time_frame, y = sevdayavg_totalstaffedadulticubeds, color = "b", linewidth = 5)       #Graph 1 is a line plot of total adult ICU beds vs. collection week of the data
 
-g2 = sns.lineplot(x = time_frame, y = sevdayavg_totalstaffedadulticubedsoccupied, color = "y", linewidth = 5)       #Graph 2 is a line plot of total adult occupied ICU beds vs. collection week of the data
 
-g3 = sns.lineplot(x = time_frame, y = sevdayavg_totalstaffedadulticubedsoccupiedwithcovid, color = "r", linewidth = 5)      #Graph 3 is a line plot of total adult occupied ICU beds with confirmed COVID vs. collection week of the data
+g1 = sns.lineplot(x = pd.to_datetime(time_frame), y = sevdayavg_totalstaffedadulticubeds, color = "b", linewidth = lineplot_linewidth)       #Graph 1 is a line plot of total adult ICU beds vs. collection week of the data
+
+g2 = sns.lineplot(x = pd.to_datetime(time_frame), y = sevdayavg_totalstaffedadulticubedsoccupied, color = "y", linewidth = lineplot_linewidth)       #Graph 2 is a line plot of total adult occupied ICU beds vs. collection week of the data
+
+g3 = sns.lineplot(x = pd.to_datetime(time_frame), y = sevdayavg_totalstaffedadulticubedsoccupiedwithcovid, color = "r", linewidth = lineplot_linewidth)      #Graph 3 is a line plot of total adult occupied ICU beds with confirmed COVID vs. collection week of the data
+
+
+
+fig.suptitle("TN Hospital Totals", fontsize = 32)
+plt.xlabel("Collection Week", fontsize = 32)
+plt.ylabel("Adult ICU Beds", fontsize = 32)
+plt.legend(labels=["Total Beds","Occupied Beds","Occupied Beds with COVID"])
 
 
